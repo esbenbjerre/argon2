@@ -26,6 +26,10 @@ class Argon2Tests extends FunSuite {
     assert(hash != input)
   }
 
+  test("An Argon2 hash should not end with a newline") {
+    assert(Argon2id.hash("abcdef", Argon2id.salt(16), 1, 4096, 2, 32).last != '\n')
+  }
+
   test("An Argon2 hash is as long as specified") {
     assert(Argon2id.hash("abcdef", Argon2id.salt(16), 1, 4096, 2, 32).length == 64)
   }
