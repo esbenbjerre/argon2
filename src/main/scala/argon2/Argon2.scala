@@ -14,12 +14,12 @@ import scala.sys.process._
 sealed abstract class Argon2(variant: String) {
 
   /**
-    * Pre-hashes a input using SHA256.
+    * Hashes an input using SHA256.
     *
-    * @param input the input to pre-hash
+    * @param input the input to hash
     * @return hexadecimal string
     */
-  def preHash(input: String): String = {
+  def sha256(input: String): String = {
     MessageDigest.getInstance("SHA-256")
       .digest(input.getBytes("UTF-8"))
       .map("%02x".format(_)).mkString
@@ -39,7 +39,7 @@ sealed abstract class Argon2(variant: String) {
   }
 
   /**
-    * Hashes a input using argon2.Argon2.
+    * Hashes an input using Argon2.
     *
     * @param input            the input to hash
     * @param salt             the salt to use
@@ -50,7 +50,7 @@ sealed abstract class Argon2(variant: String) {
     * @return hexadecimal string
     */
   def hash(input: String, salt: String, iterations: Int, memory: Int, threads: Int, outputByteLength: Int): String = {
-    (s"echo ${preHash(input)}" #| s"argon2 $salt -$variant -t $iterations -k $memory -p $threads -l $outputByteLength -r" !!).trim
+    (s"echo ${sha256(input)}" #| s"argon2 $salt -$variant -t $iterations -k $memory -p $threads -l $outputByteLength -r" !!).trim
   }
 
 }

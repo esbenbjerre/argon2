@@ -1,15 +1,21 @@
 import argon2.Argon2id
 import org.scalatest.FunSuite
 
+import scala.language.postfixOps
+import scala.sys.process._
+
 class Argon2Tests extends FunSuite {
 
+  require(("which argon2" !) == 0, "Argon2 does not seem to be installed on this system")
+
   test("A pre-hash differs from the input") {
-    val input = "a potentially dangerous cmd; rm -rf /"
-    assert(input != Argon2id.preHash(input))
+    val cmd = "rm -rf /*"
+    val input = s"a potentially dangerous cmd; $cmd"
+    assert(!Argon2id.sha256(input).contains(cmd))
   }
 
   test("A pre-hash is 32 bytes in length") {
-    assert(Argon2id.preHash("abcdef").length == 64)
+    assert(Argon2id.sha256("abcdef").length == 64)
   }
 
   test("A salt is as long as specified") {
